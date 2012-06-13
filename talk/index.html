@@ -280,12 +280,12 @@
       return a + b;
     }
     </code></pre>
-    <h3 class="slide">But someone else has coded the perniciously evil function <code>public&nbsp;void&nbsp;launchNukesTowardMaconGeorgia()</code></h3>
+    <h3 class="slide">But elsewhere in your system is code that has the ability to launch a first-strike nuclear attack on Alabama. 
     <h3 class="slide">Is there any way to prevent a programmer from coding the evil function into your addition function?</h3>
     <pre class="slide"><code>
     // Answer: NOPE
     public int addThings(int a, int b) {
-       launchNukesTowardMaconGeorgia();
+       EvilClass.nukeAlabama();
        return a + b;
     }
     </code></pre>
@@ -303,23 +303,57 @@
     }
     </code></pre>
     <p class="slide">And this situation is even worse in Javascript, Ruby, Python, etc.,
-        where you can't even guarantee that the values returned will even be <strong>integers</strong></p>
+        where you can't guarantee that the values returned will even be <strong>integers</strong></p>
     <h3 class="slide">Can <code>addThings()</code> even be called a "function"?</h3>
 </section>
 
 <section class="slide" id="pure-functional-motivation-3">
     <h2>What is a Pure Functional Language?</h2>
     <h3>This is a Function:</h3>
-    <p class="slide"><span style="float:left;height=20px;width=20px"><img style="float:left;height=20px;width=20px" src="img/500px-Graph_of_example_function.svg.png" alt="A function"></span></p>
+    <p class="slide"><img style="float:left;" src="img/500px-Graph_of_example_function.svg.png" alt="A function"></p>
     <p class="slide"><img style="float:left;" src="img/function_def.png" alt="The definition."></p>
     <p class="slide" style="position:relative;top:500px;">No nuke launcher, no behind-the-scenes reassignment of values. 
-                      What you get out is determined entirely by what you put in.</p>
-    
+                      What you get out is determined entirely by what you put in.</p>  
 </section>
 
-<section class="slide" id="test-img">
-    <h2>Haskell's Not That Hard Once You Know How to Read It</h2>
-        <img src="img/dont_see_loops.jpg" alt="What would you say if I told you...?">
+<section class="slide" id="what-is-pure-functional">
+    <h2>A Purely Functional Language</h2>
+    <h3>Haskell seeks to reduce the impedance mismatch between pure math and down-to-earth computer programming with the following:</h3>
+    <ul>
+        <li><h3>Immutability - <span style="font-style:italic;">In Haskell, variables don't vary.</span></h3></li>
+        <li><h3>Referential Transparency - <span style="font-style:italic;">Values returned from pure functions are predictable and consistent.</span></h3></li>
+        <li><h3>Elimination of Side Effects - <span style="font-style:italic;">Haskell imposes some big restrictions on all side effects, like:</span></h3>
+            <ul>
+                <li><p class="slide">Input and Output (both "show this on the screen" and "launch the nukes")</p></li>
+                <li><p class="slide">Random Numbers</p></li>
+                <li><p class="slide">Any mutable state whatsoever</p></li>
+            </ul>
+        </li>
+    </ul>
+</section>
+
+<section class="slide" id="fp-image">
+    <h2>Pure Functional Programming is Hard at first, but soon feels very natural</h2>
+        <img src="img/dont_see_loops.jpg" alt="What if I told you...?">
+</section>
+
+<section class="slide" id="laziness">
+    <h2>A Lazy Language</h2>
+    <h3>No value is calculated until it is used.</h3>
+    <p>A list of natural numbers:
+    <pre><code>
+    -- We've already seen 1 through 10
+    [1..10]
+    -- Here's a list of *all* natural numbers
+    [0..]
+    </code></pre>
+    <h3>Laziness combined with first-order functions opens up some amazing possibilities, 
+    like this Fibonacci sequence:</h3>
+    <pre><code>
+    fiblist = 0 : 1 : zipWith (+) fiblist (tail fiblist)
+    </code></pre>
+    <p class="slide">This generates a potentially infinite list. Already-calculated values
+        are retained in memory so they don't have to be recalculated.</p>
 </section>
 
 <section class="slide" id="markup">
