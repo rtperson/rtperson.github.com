@@ -38,7 +38,7 @@
 </section>
 
 <section class="slide" id="title-kicker">
-    <h2>The Bottom Line</h2>
+    <h2>Big Changes are Coming</h2>
     <p>To avoid Armageddon, you should plan to</p>
     <ol>
         <li class="slide">
@@ -122,6 +122,144 @@
           <p class="slide">You pray that no one else in the house picks up the phone while you're surfing Compuserve</p>
       </li>
     </ul>
+</section>
+
+<section class="slide" id="need-new-tools-2">
+    <h2>Programmers Need New Tools to Manage Growing Systems</h2>
+    <h3>The Computer Ecosystem of Today:</h3>
+    <ul>
+      <li>
+          <p>Smart Phones are dual core, wifi enabled</p>
+      </li>
+      <li>
+          <p>Constant connection to the internet, often at 100 Mbps or more</p>
+      </li>
+      <li>
+          <p>International Video Chatting is Normal and Free (!)</p>
+      </li>
+      <li>
+          <p>TB+ Hard Disks are challenging the old "Windows Based" UI</p>
+          <ul class="slide">
+              <li>
+                  <p>The Windows-style "Start Menu" no longer makes sense.</p>
+              </li>
+              <li>
+                  <p>All Major Vendors are switching to a more easily searchable UI</p>
+              </li>
+              <li>
+                  <p>Windows 8 Metro, Ubuntu Unity, Gnome 3...</p>
+              </li>
+          </ul>
+      </li>
+</section>
+<section class="slide" id="need-new-tools-3">
+    <h2>Programmers Need New Tools to Manage Growing Systems</h2>
+    <h3>The Computer Ecosystem of Today:</h3>
+    <ul>
+      <li>
+          <p>Multicore</p>
+          <ol>
+              <li>
+                  <p class="slide">Intel Xeon E7-8800 - <span style="font-weight:bold">10 cores</span></p>
+              </li>
+              <li>
+                  <p class="slide">Tilera GX - <span style="font-weight:bold">100 cores</span></p>
+              </li>
+              <li>
+                  <p class="slide">The Azul Vega 3 <span style="font-weight:bold">768 cores</span></p>
+              </li>
+
+          </ol>
+      </li>
+    </ul>
+    <p class="slide"><p><img style="float:left;" src="img/Hoffman.jpg" alt="Lots and lots"></p>
+        <p><span style="position:bottom;">There's lots and lots of them...</span></p></p>
+    <p class="slide">Obviously, with that many cores parallelism and concurrency are going to be huge concerns.</p>
+</section>
+
+<section class="slide" id="the-bottom-line">
+    <h2>The Bottom Line</h2>
+    <h1>Complexity has once more advanced past the ability of our currently-popular programming languages to manage.</h1>
+</section>
+
+<section class="slide" id="enter-fp">
+    <h2>Industry Dips Its Toe into Functional Programming</h2>
+    <h3>It's almost a given that most developers will need to know at least <strong>some</strong> FP techniques:</h3>
+    <ul>
+      <li>
+          <p>Javascript, CoffeeScript - the gateway drugs. (JQuery makes heavy use of FP)</p>
+      </li> 
+      <li>
+          <p>Erlang - created by Ericsson. Supports massive concurrency. Used a lot in telecommunications.</p>
+      </li> 
+      <li>
+          <p>Python, Ruby, Groovy - other "scripting" languages</p>
+      </li> 
+      <li>
+          <p>Scala, Clojure, F#, LINQ</p>
+      </li>
+      <li>
+          <p>Haskell - the nerdy kid with thick glasses</p>
+      </li>
+    </ul>
+</section>
+
+<section class="slide" id="fp-basics">
+    <h2>What is FP?</h2>
+    <h3>The basics:</h3>
+    <ul>
+      <li>
+          <p>It has been around for a long time - LISP dates back to 1950</p>
+      </li> 
+      <li>
+          <p>Based on lambda calculus</p>
+      </li> 
+      <li>
+          <p>Functions are first-class values</p>
+      </li> 
+      <li>
+          <p>Iteration is accomplished through recursion rather than looping</p>
+      </li>
+      <li>
+          <p>Can get very theoretical</p>
+      </li>
+    </ul>    
+</section>
+
+<section class="slide" id="declarative-imperative">
+    <h2>Declarative versus Imperative Programming</h2>
+    <h3>Summing Integers 1 through 10<h3>
+    <h3>Imperative Programming, in Java:</h3>
+    <pre><code>
+    int sum = 0;
+    for (int x=1; x <=10; x++) {
+        sum += x;
+    }
+    </code></pre>
+    <h3>Functional Programming, in Haskell:</h3>
+    <pre><code>let sum = foldr (+) 0 [1..10]</code></pre>
+</section>
+
+<section class="slide" id="exalted-claims">
+    <h2>Some pretty exalted claims for FP</h2>
+    <blockquote cite="http://www.paulgraham.com/avg.html">
+		<p>Our hypothesis was that if we wrote our software in Lisp, 
+        we'd be able to get features done faster than our competitors, 
+        and also to do things in our software that they couldn't do. 
+        And because Lisp was so high-level, we wouldn't need a big development 
+        team, so our costs would be lower.... Somewhat surprisingly, it worked.</p>
+		<p><cite>Paul Graham, founder of Viaweb, which was acquired and became Yahoo Shopping</cite></p>
+	</blockquote>
+    <p class="slide"><strong>Protip:</strong> It helps to have a Ph.D. in Computer Engineering from Harvard,
+       and to have already written the definitive book on the language in question.</p>
+</section>
+
+<section class="slide" id="more-claims">
+    <h2>Some pretty exalted claims for FP</h2>
+    <blockquote cite="http://www.yesodweb.com/blog/2012/04/announcing-yesod-1-0">
+    	<p>[Haskell] allowed us to write a powerful and fast webserver in about 500 lines of code.</p>
+		<p><cite>Michael Snoyman, lead developer of Yesod, a Haskell Web Framework</cite></p>
+	</blockquote>    
 </section>
 
 <section class="slide" id="test-img">
