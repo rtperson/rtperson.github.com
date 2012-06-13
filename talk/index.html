@@ -172,14 +172,14 @@
           </ol>
       </li>
     </ul>
-    <p class="slide"><p><img style="float:left;" src="img/Hoffman.jpg" alt="Lots and lots"></p>
-        <p><span style="position:bottom;">There's lots and lots of them...</span></p></p>
-    <p class="slide">Obviously, with that many cores parallelism and concurrency are going to be huge concerns.</p>
+    <p class="slide"><img style="float:left;" src="img/Hoffman.jpg" alt="Lots and lots">
+        <span style="position:bottom;">There's lots and lots of them...</span></p>
+    <p class="slide" style="position:relative;top:170px;">Obviously, with that many cores parallelism and concurrency are going to be huge concerns.</p>
 </section>
 
 <section class="slide" id="the-bottom-line">
     <h2>The Bottom Line</h2>
-    <h1>Complexity has once more advanced past the ability of our currently-popular programming languages to manage.</h1>
+    <h3>Complexity has once more advanced past the ability of our currently-popular programming languages to manage.</h3>
 </section>
 
 <section class="slide" id="enter-fp">
@@ -237,7 +237,7 @@
     }
     </code></pre>
     <h3>Functional Programming, in Haskell:</h3>
-    <pre><code>let sum = foldr (+) 0 [1..10]</code></pre>
+    <pre><code>sum = foldr (+) 0 [1..10]</code></pre>
 </section>
 
 <section class="slide" id="exalted-claims">
@@ -260,6 +260,61 @@
     	<p>[Haskell] allowed us to write a powerful and fast webserver in about 500 lines of code.</p>
 		<p><cite>Michael Snoyman, lead developer of Yesod, a Haskell Web Framework</cite></p>
 	</blockquote>    
+</section>
+
+<section class="slide" id="enter-haskell">
+    <h2>So, What is Haskell Anyway?</h2>
+    <h3>Haskell is, according to its creators:</h3>
+    <ul>
+        <li><p>Polymorphically Statically Typed</p></li>
+        <li><p>Lazy</p></li>
+        <li><p>Purely Functional</p></li>
+    </ul>
+</section>
+
+<section class="slide" id="pure-functional-motivation">
+    <h2>What is a Pure Functional Language?</h2>
+    <h3>Imagine you were trying to write an addition function in Java...</h3>
+    <pre><code>
+    public int addThings(int a, int b) {
+      return a + b;
+    }
+    </code></pre>
+    <h3 class="slide">But someone else has coded the perniciously evil function <code>public&nbsp;void&nbsp;launchNukesTowardMaconGeorgia()</code></h3>
+    <h3 class="slide">Is there any way to prevent a programmer from coding the evil function into your addition function?</h3>
+    <pre class="slide"><code>
+    // Answer: NOPE
+    public int addThings(int a, int b) {
+       launchNukesTowardMaconGeorgia();
+       return a + b;
+    }
+    </code></pre>
+</section>
+
+<section class="slide" id="pure-functional-motivation-2">
+    <h2>What is a Pure Functional Language?</h2>
+    <h3>What's more, you can't even guarantee that the values of <code>a</code>
+        and <code>b</code> will make it through your function unmolested.</h3>
+    <pre><code>
+    public int addThings(int a, int b) {
+      a = -2000000;
+      b = HEH_HEH_UR_MOM;
+      return a + b;
+    }
+    </code></pre>
+    <p class="slide">And this situation is even worse in Javascript, Ruby, Python, etc.,
+        where you can't even guarantee that the values returned will even be <strong>integers</strong></p>
+    <h3 class="slide">Can <code>addThings()</code> even be called a "function"?</h3>
+</section>
+
+<section class="slide" id="pure-functional-motivation-3">
+    <h2>What is a Pure Functional Language?</h2>
+    <h3>This is a Function:</h3>
+    <p class="slide"><span style="float:left;height=20px;width=20px"><img style="float:left;height=20px;width=20px" src="img/500px-Graph_of_example_function.svg.png" alt="A function"></span></p>
+    <p class="slide"><img style="float:left;" src="img/function_def.png" alt="The definition."></p>
+    <p class="slide" style="position:relative;top:500px;">No nuke launcher, no behind-the-scenes reassignment of values. 
+                      What you get out is determined entirely by what you put in.</p>
+    
 </section>
 
 <section class="slide" id="test-img">
