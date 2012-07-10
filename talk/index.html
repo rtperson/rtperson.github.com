@@ -286,8 +286,8 @@
         <li><p>Natively compiled -- combined with static typing, this gives it very good performance characteristics</p></li>
         <li><p>Its main compiler is the Glasgow Haskell Compiler</p>
             <ul>
-                <li><p><code>ghc</code>: the Haskell compiler<p></li>
-                <li><p><code>ghci</code>: the Haskell interpreter (or REPL)<p></li>
+                <li><p><code><strong>ghc</strong></code> -- the Haskell compiler<p></li>
+                <li><p><code><strong>ghci</strong></code> -- the Haskell interpreter (or REPL)<p></li>
             </ul>
         </li>
     </ul>
@@ -460,7 +460,8 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
                deriving Show
     </code></pre>
     <p>I can now pattern-match on my Shape type, and do a lot of other fun things.</p>
-    <p>But one thing I <span style="font-style:italic">cannot</span> do is declare a Shape of type Ellipse.</p>
+    <p>But one thing I <span style="font-style:italic">cannot</span> do is declare a Shape of type Ellipse
+    (unless, of course, I add and Ellipse to Shape).</p>
 </section>
 
 <section class="slide" id="types-4">
@@ -481,115 +482,97 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
     
     <h3 class="slide">Little Bobby Tables can't hurt a system written in Haskell. 
     SQL Injection is blocked by the type system.</h3>
+    <p class="slide">This barely scratches the surface of what's possible with the type system. To fully
+    cover all the possibilities opened up by the type system in Haskell would take weeks.</p>
 </section>
 
-<section class="slide" id="markup">
-	<h2>The Markup</h2>
-	<p>Slides are just HTML elements with a class of <code>slide</code>.</p>
-	<pre><code>&lt;section class=&quot;slide&quot;&gt;
-   &lt;h2&gt;How to Make a Deck&lt;/h2&gt;
-   &lt;ol&gt;
-      &lt;li&gt;
-         &lt;h3&gt;Write Slides&lt;/h3&gt;
-         &lt;p&gt;Slide content is simple HTML.&lt;/p&gt;
-      &lt;/li&gt;
-      &lt;li&gt;
-         &lt;h3&gt;Choose Themes&lt;/h3&gt;
-         &lt;p&gt;One for slide styles and one for deck transitions.&lt;/p&gt;
-      &lt;/li&gt;
-      &hellip;
-   &lt;/ol&gt;
-&lt;/section&gt;</code></pre>
+<section class="slide" id="concurrency-1">
+    <h2>Yes, but What About Concurrency?</h2>
+    <h3>Concurrency, as is typically implemented in Java, can be described as "grab a lock and pray."</h3>
 </section>
 
-<section class="slide" id="themes">
-	<h2>Style Themes</h2>
-	<p>Customizes the colors, typography, and layout of slide&nbsp;content.</p>
-	<pre><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;/path/to/css/style-theme.css&quot;&gt;</code></pre>
-	<h2>Transition Themes</h2>
-	<p>Defines transitions between slides using CSS3 transitions.  Less capable browsers fall back to cutaways. But <strong>you</strong> aren&rsquo;t using <em>those</em> browsers to give your presentations, are&nbsp;you&hellip;</p>
-	<pre><code>&lt;link rel=&quot;stylesheet&quot; href=&quot;/path/to/css/transition-theme.css&quot;&gt;</code></pre>
+<section class="slide" id="concurrency-2">
+    <h2>Locks, Locks Everywhere!</h2>
+    
+<pre><code>public boolean transferMoney (Account fromAcct, Account toAcct, DollarAmt amt, 
+    long timeout, TimeUnit unit) 
+    throws InsufficientFundsException, InterruptedException {
+    
+    long fixedDelay = getFixedDelayComponentNanos(timeout, unit);
+    long randMod = getRandomDelayModulusNanos(timeout, unit);
+    long stopTime = System.nanoTime() + unit.toNanos(timeout);
+    
+    while (true) {
+        if (fromAcct.lock.tryLock()) {
+            try{
+                if (toAcct.lock.tryLock()) {
+                    try {
+                        if (fromAcct.getBalance().compareTo(amount) < 0) {
+                            throw new InsufficientFundsException();
+                        } else {
+                            fromAcct.debit(amount);
+                            toAcct.credit(amount);
+                            return true;
+                        }
+                    } finally {
+                        toAcct.lock.unlock();
+                    }
+                }
+            } finally {
+                fromAcct.lock.unlock();
+            }
+        }
+        if (System.nanoTime() < stopTime)
+            return false;
+        NANOSECONDS.sleep(fixedDelay + rnd.nextLong() % randMod);
+    }
+}</code></pre>
 </section>
 
-<section class="slide" id="extensions">
-	<h2>Extensions</h2>
-	<p>Core gives you basic slide functionality with left and right arrow navigation, but you may want more. Here are the ones included in this&nbsp;deck:</p>
-	
-	<ul>
-		<li class="slide" id="extensions-goto">
-			<strong>deck.goto</strong>: Adds a shortcut key to jump to any slide number.  Hit g, type in the slide number, and hit&nbsp;enter.
-		</li>
-		
-		<li class="slide" id="extensions-hash">
-			<strong>deck.hash</strong>: Enables internal linking within slides, deep linking to individual slides, and updates the address bar &amp; a permalink anchor with each slide&nbsp;change.
-		</li>
-
-		<li class="slide" id="extensions-menu">
-			<strong>deck.menu</strong>: Adds a menu view, letting you see all slides in a grid. Hit m to toggle to menu view, continue navigating your deck, and hit m to return to normal view. Touch devices can double-tap the deck to switch between&nbsp;views.
-		</li>
-
-		<li class="slide" id="extensions-navigation">
-			<strong>deck.navigation</strong>: Adds clickable left and right buttons for the less keyboard&nbsp;inclined.
-		</li>
-
-		<li class="slide" id="extensions-status">
-			<strong>deck.status</strong>: Adds a page number indicator. (current/total)
-		</li>
-	</ul>
-	
-	<p class="slide" id="extension-folders">Each extension folder in the download package contains the necessary JavaScript, CSS, and HTML&nbsp;files. For a complete list of extension modules included in deck.js, check out the&nbsp;<a href="http://imakewebthings.github.com/deck.js/docs">documentation</a>.</p>
+<section class="slide" id="concurrency-3">
+    <h2>But there's one small problem with locks</h2>
+    <h3>Well, actually, there are about five big problems with locks</h3>
+    <ul>
+        <li>
+            <p class="slide"><strong>Taking too few locks.</strong> You forget to take a lock and two threads end up overwriting data.</p>
+        </li>
+        <li>
+            <p class="slide"><strong>Taking too many locks.</strong> Your system slows to a crawl, a situation known as thread starvation.</p>
+        </li>
+        <li>
+            <p class="slide"><strong>Taking the wrong locks.</strong> You lock 
+            out an unrelated thread while your thread blithely creates a race condition.</p>
+        </li>
+        <li>
+            <p class="slide"><strong>Taking locks in the wrong order.</strong> Suddenly you have 
+            what's known as the Dining Philosophers problem. Two locks just sit there and say "After you... No, after you...
+            I insist, after you..."</p>
+        </li>
+        <li>
+            <p class="slide"><strong>Backing out of the inevitable errors.</strong> It's 
+            difficult to guarantee that concurrent transactions are truly atomic. Very easy to leave a system
+            in an inconsistent state.</p>
+        </li>
+    </ul>
 </section>
 
-<section class="slide" id="nested">
-	<h2>Nested Slides</h2>
-	<p>That last slide had a few steps.  To create substeps in slides, just nest them:</p>
-	<pre><code>&lt;section class=&quot;slide&quot;&gt;
-  &lt;h2&gt;Extensions&lt;/h2&gt;
-  &lt;p&gt;Core gives you basic slide functionality...&lt;/p&gt;		
-  &lt;ul&gt;
-     &lt;li class=&quot;slide&quot;&gt;
-        &lt;h3&gt;deck.goto&lt;/h3&gt;
-        &lt;p&gt;Adds a shortcut key to jump to any slide number...&lt;/p&gt;
-     &lt;/li&gt;
-     &lt;li class=&quot;slide&quot;&gt;...&lt;/li&gt;	
-     &lt;li class=&quot;slide&quot;&gt;...&lt;/li&gt;
-     &lt;li class=&quot;slide&quot;&gt;...&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/section&gt;</code></pre>
+<section class="slide" id="concurrency-4">
+    <h2>But the Worst Thing About Locks</h2>
+    <h3>The Worst thing about lock-based concurrency is that the locks themselves 
+    are not <span style="font-style:italic">composable</span>.</h3>
+    <p>It is impossible, given the current state of the art in Java, to compose an entire thread-safe system 
+    out of smaller thread-safe components. Lock contention, deadlocks, and race conditions are always a risk at every level.</p>
+    <p class="slide">Java's concurrency implementation is today's version of GOTO BASIC and spaghetti code.</p>
 </section>
 
-<section class="slide" id="elements-images">
-	<h2>Other Elements: Images</h2>
-	<img src="http://placekitten.com/600/375" alt="Kitties">
-	<pre><code>&lt;img src=&quot;http://placekitten.com/600/375&quot; alt=&quot;Kitties&quot;&gt;</code></pre>
+<section class="slide" id="concurrency-5">
+    <h2>Imagine your Ideal Concurrent System</h2>
+    <h3>What would </h3>
+    <p>It is impossible, given the current state of the art in Java, to compose an entire thread-safe system 
+    out of smaller thread-safe components. Lock contention, deadlocks, and race conditions are always a risk at every level.</p>
+    <p class="slide">Java's concurrency implementation is today's version of GOTO BASIC and spaghetti code.</p>
 </section>
 
-<section class="slide" id="elements-blockquotes">
-	<h2>Other Elements: Blockquotes</h2>
-	<blockquote cite="http://example.org">
-		<p>Food is an important part of a balanced diet.</p>
-		<p><cite>Fran Lebowitz</cite></p>
-	</blockquote>
-	<pre><code>&lt;blockquote cite=&quot;http://example.org&quot;&gt;
-  &lt;p&gt;Food is an important part of a balanced diet.&lt;/p&gt;
-  &lt;p&gt;&lt;cite&gt;Fran Lebowitz&lt;/cite&gt;&lt;/p&gt;
-&lt;/blockquote&gt;</code></pre>
-</section>
-
-
-<section class="slide" id="elements-videos">
-	<h2>Other Elements: Video Embeds</h2>
-	<p>Embed videos from your favorite online video service or with an HTML5 video&nbsp;element.</p>
-	
-	<p>I am not even going to bother including a video, as evil WebSource will disallow it.</p>
-	
-	<pre><code>&lt;iframe src=&quot;http://player.vimeo.com/video/1063136?title=0&amp;amp;byline=0&amp;amp;portrait=0&quot; width=&quot;400&quot; height=&quot;225&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;</code></pre>
-</section>
-
-<section class="slide" id="digging-deeper">
-	<h2>Digging Deeper</h2>
-	<p>If you want to learn about making your own themes, extending deck.js, and more, check out the&nbsp;<a href="docs/">documentation</a>.</p>
-</section>
 
 <!-- deck.navigation snippet -->
 <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
