@@ -302,6 +302,7 @@
       return a + b;
     }
     </code></pre>
+    <p class="slide">Unless you add the keyword <code>final</code> on all your parameters, which most of us <strong>never</strong> do.</p>
     <p class="slide">And this situation is even worse in Javascript, Ruby, Python, etc.,
         where you can't guarantee that the values returned will even be <strong>integers</strong></p>
     <h3 class="slide">Can <code>addThings()</code> even be called a "function"?</h3>
@@ -309,7 +310,7 @@
 
 <section class="slide" id="pure-functional-motivation-3">
     <h2>What is a Pure Functional Language?</h2>
-    <h3>This is a Function:</h3>
+    <h3>This is a Pure Function:</h3>
     <p class="slide"><img style="float:left;height:300px;width:auto;" src="img/500px-Graph_of_example_function.svg.png" alt="A function"></p>
     <p class="slide" style="position:relative"><img style="float:left;" src="img/function_def.png" alt="The definition."></p>
     <div class="slide" style="position:absolute;top:500px;left:50px">No nuke launcher, no behind-the-scenes reassignment of values. What you get out is determined entirely by what you put in.</div>  
@@ -321,7 +322,7 @@
     <ul>
         <li><h3>Immutability: <aside style="font-size:medium">In Haskell, variables don't vary.</aside></h3></li>
         <li><h3>Referential Transparency: <aside style="font-size:medium">Values returned from pure functions are predictable and consistent.</aside></h3></li>
-        <li><h3>Elimination of Side Effects:  <aside style="font-size:medium">Haskell imposes some big restrictions on all side effects, like:</aside></h3>
+        <li><h3>Elimination of Side Effects:  <aside style="font-size:medium">Haskell imposes some big restrictions on side effects, for example:</aside></h3>
             <ul>
                 <li><p class="slide">Input and Output (both "show this on the screen" and "launch the nukes")</p></li>
                 <li><p class="slide">Random Numbers</p></li>
@@ -334,6 +335,8 @@
 <section class="slide" id="fp-image">
     <h2>Pure Functional Programming is Hard at first, but soon feels very natural</h2>
         <img src="img/dont_see_loops.jpg" alt="What if I told you...?">
+        
+        <p style="text-align:center;padding-top:50px;font-size:30px;font-weight:bolder">Demos</p>
 </section>
 
 <section class="slide" id="laziness">
@@ -353,6 +356,77 @@
     </code></pre>
     <p class="slide">This generates a potentially infinite list. Already-calculated values
         are retained in memory so they don't have to be recalculated.</p>
+</section>
+
+<section class="slide" id="laziness-2">
+    <h2>A Lazy Language</h2>
+    <h3>A few thoughts about laziness</h3>
+    <ul>
+        <li>It is not a golden bullet. In fact, for larger apps, laziness tends to complicate performance analysis.</li>
+        <li>You can impose strictness if you need it. In fact, there's a steadily-growing collection of 
+            data structures that do nothing but enforce strictness on heavy IO operations (e.g., conduits, pipes, enumerators)</li>
+        <li>Because of issues around laziness, a lot of Haskell development effort is devoted to profiling.</li>
+    </ul>
+</section>
+
+<section class="slide" id="types-1">
+    <h2>Statically Typed</h2>
+    <h3>Types in Haskell is a vast topic, so here are a few brief observations</h3>
+    <blockquote cite="http://www.reddit.com/r/haskell/comments/w7zd8/i_never_tested_this_code_before_releasing_it/c5b3j2e">
+        <p>in Haskell there is a significantly lower emphasis on unit testing and a 
+    greater emphasis on using the type system and equational reasoning to prove 
+    your program is correct. Unit tests are a good starting point until you can 
+    prove your program is correct, but once you do that they are pretty much 
+    a formality</p>
+		<p><cite>"Tekmo," in a comment on Reddit.com</cite></p>
+	</blockquote> 
+
+</section>
+
+<section class="slide" id="types-2">
+    <h2>Statically Typed</h2>
+    <h3>How do you "prove your program is correct"? And how do you do it in the absence of unit tests?</h3>
+    <h3>Well, first, you start with ridiculously strong typing.</h3>
+    <pre><code>>let i = 3 :: Int  -- the '::' is the type indicator
+>let j = 3 :: Integer
+>i + j
+
+&lt;interactive&gt;:9:5:
+    Couldn't match expected type `Int' with actual type `Integer'
+    In the second argument of `(+)', namely `j'
+    In the expression: i + j
+    In an equation for `it': it = i + j
+</code></pre>
+
+<h3>What happened? The compiler complained that we're trying to add two 
+different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
+
+<h3 class="slide">In Haskell, types are <span style="font-style:italic">never</span> coerced.</h3>
+</section>
+
+<section class="slide" id="types-3">
+    <h2>Statically Typed</h2>
+    <h3>Write about algebraic data types here</h3>
+</section>
+
+<section class="slide" id="types-4">
+    <h2>Statically Typed</h2>
+    <h3>Think about what this implies for web development:</h3>
+    
+    <ul>
+        <li class="slide">No more XSS attacks -- they aren't even possible any more</li>
+        <li class="slide">SQL Injection are likewise impossible</li>
+        <li class="slide">Because in your framework, HTML, Javascript, and SQL will each have their own unique types, 
+        and these types will <span style="font-style:italic">never</span> be allowed to intermingle.</li>
+    </ul>
+</section>
+
+<section class="slide" id="types-5">
+    <h2>Statically Typed</h2>
+    <img src="img/exploits_of_a_mom.png" alt="Good old xkcd.com">
+    
+    <h3 class="slide">Little Bobby Tables can't hurt a system written in Haskell. 
+    SQL Injection is blocked by the type system.</h3>
 </section>
 
 <section class="slide" id="markup">
