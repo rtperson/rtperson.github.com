@@ -428,12 +428,44 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
 
 <section class="slide" id="types-3">
     <h2>Statically Typed</h2>
-    <h3>Write about algebraic data types here</h3>
+    <h3>Types in Haskell are based on the Hindley Milner type system, a
+    much more flexible and more constraining than any type system 
+    you're likely to have dealt with.</h3>
+    <ul>
+        <li>
+            <p>The type system itself is a deductive system, capable of producing proofs.</p>
+        </li>
+        <li>
+            <p>Types can themselves take types, which is one of the things that make monads confusing.</p>
+        </li>
+        <li>
+            <p>Types can also be algebraic.</p>
+        </li>
+    </ul>
+</section>
+
+<section class="slide" id="types-3">
+    <h2>Statically Typed</h2>
+    <h3>Here's a simple algebraic type:</h3>
+    <pre><code>
+    data Color = Red | Blue | Green | Grey | Brown | KindaPukeyAqua 
+                 deriving Show
+    </code></pre>
+    <p>You can optionally add records to your data constructors.</p>
+    <pre><code>
+    data Shape = Point { x :: Int, y :: Int }
+               | Square { topLeft :: Point, length :: Int}
+               | Circle { center :: Point, radius :: Int }
+               | Emptiness
+               deriving Show
+    </code></pre>
+    <p>I can now pattern-match on my Shape type, and do a lot of other fun things.</p>
+    <p>But one thing I <span style="font-style:italic">cannot</span> do is declare a Shape of type Ellipse.</p>
 </section>
 
 <section class="slide" id="types-4">
     <h2>Statically Typed</h2>
-    <h3>Think about what this implies for web development:</h3>
+    <h3>Think about what this sort of type system implies for web development:</h3>
     
     <ul>
         <li class="slide">No more XSS attacks -- they aren't even possible any more</li>
