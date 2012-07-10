@@ -240,6 +240,17 @@
     <pre><code>sum = foldr (+) 0 [1..10]</code></pre>
 </section>
 
+<section class="slide" id="declarative-imperative-2">
+    <h2>Declarative versus Imperative Programming</h2>
+    <h3>The definition of <code>foldr</code>, taken directly from GHC's source:</h3>
+    <pre><code>
+    foldr :: (a -> b -> b) -> b -> [a] -> b
+    foldr k z = go
+        where
+            go []     = z
+            go (y:ys) = y `k` go ys</code></pre>
+</section>
+
 <section class="slide" id="exalted-claims">
     <h2>Some pretty exalted claims for FP</h2>
     <blockquote cite="http://www.paulgraham.com/avg.html">
@@ -270,7 +281,18 @@
         <li><p>Lazy</p></li>
         <li><p>Purely Functional</p></li>
     </ul>
+    <h3>Other things to note:</h3>
+    <ul>
+        <li><p>Natively compiled -- combined with static typing, this gives it very good performance characteristics</p></li>
+        <li><p>Its main compiler is the Glasgow Haskell Compiler</p>
+            <ul>
+                <li><p><code>ghc</code>: the Haskell compiler<p></li>
+                <li><p><code>ghci</code>: the Haskell interpreter (or REPL)<p></li>
+            </ul>
+        </li>
+    </ul>
 </section>
+
 
 <section class="slide" id="pure-functional-motivation">
     <h2>What is a Pure Functional Language?</h2>
@@ -280,8 +302,8 @@
       return a + b;
     }
     </code></pre>
-    <h3 class="slide">But elsewhere in your system is code that has the ability to launch a first-strike nuclear attack on Alabama. 
-    <h3 class="slide">Is there any way to prevent a programmer from coding the evil function into your addition function?</h3>
+    <p class="slide">But elsewhere in your system is code that has the ability to launch a first-strike nuclear attack on Alabama.</p> 
+    <p class="slide">Is there any way to prevent a programmer from coding the evil function into your addition function?</p>
     <pre class="slide"><code>
     // Answer: NOPE
     public int addThings(int a, int b) {
