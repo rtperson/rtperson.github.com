@@ -355,7 +355,7 @@
 </section>
 
 <section class="slide" id="fp-image">
-    <h2>Pure Functional Programming is Hard at first, but soon feels very natural</h2>
+    <h2>Pure Functional Programming is hard at first, but soon feels very natural</h2>
         <img src="img/dont_see_loops.jpg" alt="What if I told you...?">
         
         <p style="text-align:center;padding-top:50px;font-size:30px;font-weight:bolder">Demos</p>
@@ -384,7 +384,7 @@
     <h2>A Lazy Language</h2>
     <h3>A few thoughts about laziness</h3>
     <ul>
-        <li>It is not a golden bullet. In fact, for larger apps, laziness tends to complicate performance analysis.</li>
+        <li>It is not a golden bullet. For larger apps, laziness actually tends to complicate performance analysis.</li>
         <li>You can impose strictness if you need it. In fact, there's a steadily-growing collection of 
             data structures that do nothing but enforce strictness on heavy IO operations (e.g., conduits, pipes, enumerators)</li>
         <li>Because of issues around laziness, a lot of Haskell development effort is devoted to profiling.</li>
@@ -451,8 +451,10 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
     data Color = Red | Blue | Green | Grey | Brown | KindaPukeyAqua 
                  deriving Show
     </code></pre>
-    <p>You can optionally add records to your data constructors.</p>
+    <p>You can optionally add fields or records to your data constructors.</p>
     <pre><code>
+    data Point = Point Int Int  -- Point now has to be declared with an x and y
+    data Vec3  = Vec3 a a a     -- Parametric (polymorphic) types
     data Shape = Point { x :: Int, y :: Int }
                | Square { topLeft :: Point, length :: Int}
                | Circle { center :: Point, radius :: Int }
@@ -531,7 +533,7 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
 
 <section class="slide" id="concurrency-3">
     <h2>But there's one small problem with locks</h2>
-    <h3>Well, actually, there are about five big problems with locks</h3>
+    <h3>Well, actually, there are about five big problems</h3>
     <ul>
         <li>
             <p class="slide"><strong>Taking too few locks.</strong> You forget to take a lock and two threads end up overwriting data.</p>
@@ -560,6 +562,10 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
     <h2>But the Worst Thing About Locks</h2>
     <h3>The Worst thing about lock-based concurrency is that the locks themselves 
     are not <span style="font-style:italic">composable</span>.</h3>
+    <p>In our bank account example, I cannot compose a transfer operation out of individual
+    thread-safe withdraw and deposit operations. If I need to disburse money to a hundred accounts, I need
+    locks on every account. The intermediate state, where I've pulled money from account #1 but not yet deposited it
+    in accounts #2 through #101 is practically impossible to hide from external threads.</p>
     <p>It is impossible, given the current state of the art in Java, to compose an entire thread-safe system 
     out of smaller thread-safe components. Lock contention, deadlocks, and race conditions are always a risk at every level.</p>
     <p class="slide">Java's concurrency implementation is today's version of GOTO BASIC and spaghetti code.</p>
@@ -567,10 +573,57 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
 
 <section class="slide" id="concurrency-5">
     <h2>Imagine your Ideal Concurrent System</h2>
-    <h3>What would </h3>
-    <p>It is impossible, given the current state of the art in Java, to compose an entire thread-safe system 
-    out of smaller thread-safe components. Lock contention, deadlocks, and race conditions are always a risk at every level.</p>
-    <p class="slide">Java's concurrency implementation is today's version of GOTO BASIC and spaghetti code.</p>
+    <h3>What would concurrency done right look like?</h3>
+    <ul>
+        <li class="slide">
+            <p>Concurrent operations would be an all-or-nothing affair. Data would never be left in an inconsistent state</p>
+        </li>
+        <li class="slide">
+            <p>Data would never be left in an inconsistent state</p>
+        </li>
+        <li class="slide">
+            <p>Race conditions are disallowed. Operations by separate threads look like
+            they happened within the same thread. (Easier to reason about your system this way.)</p>
+        </li>
+        <li class="slide">
+            <p>It is durable, prone to recovery after errors.</span></p>
+        </li>
+    </ul>
+    <h3 class="slide">In other words, what we want from our system are the same guarantees that 
+    databases have been giving us for decades. The above just described your standard ACID transaction.
+    (Ideally, though, I'd prefer to live without the overhead of managing a transaction log.)</h3>
+</section>
+
+<section class="slide" id="STM-1">
+    <h2>Enter Software Transactional Memory</h2>
+    <h3>Here's what our bank transaction might look like in Haskell:</h3>
+    <pre><code>{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
+import Control.Concurrent.STM
+import Control.Monad
+            
+newtype Dollar = Dollar Int
+    deriving (Eq, Ord, Show, Num)
+
+type Balance = TVar Dollar
+
+data Account = Account {
+          balance   :: Balance
+        }
+        
+basicTransfer :: Num a => a -> TVar a -> TVar a -> STM ()
+basicTransfer qty fromBal toBal = do
+    fromQty <- readTVar fromBal
+    toQty   <- readTVar toBal
+    writeTVar fromBal (fromQty - qty)
+    writeTVar toBal   (toQty + qty)
+    
+transferTest :: STM (Dollar, Dollar)
+transferTest = do
+    acct1 <- newTVar (Dollar 12)
+    acct2   <- newTVar (Dollar 4)
+    basicTransfer (Dollar 3) acct1 acct2
+    liftM2 (,) (readTVar acct1) (readTVar acct2)</code></pre>
 </section>
 
 
