@@ -566,8 +566,8 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
     thread-safe withdraw and deposit operations. If I need to disburse money to a hundred accounts, I need
     locks on every account. The intermediate state, where I've pulled money from account #1 but not yet deposited it
     in accounts #2 through #101 is practically impossible to hide from external threads.</p>
-    <p>It is impossible, given the current state of the art in Java, to compose an entire thread-safe system 
-    out of smaller thread-safe components. Lock contention, deadlocks, and race conditions are always a risk at every level.</p>
+    <h3>It is impossible, given the current state of the art in Java, to compose an entire thread-safe system 
+    out of smaller thread-safe components. Lock contention, deadlocks, and race conditions are always a risk.</h3>
     <p class="slide">Java's concurrency implementation is today's version of GOTO BASIC and spaghetti code.</p>
 </section>
 
@@ -594,36 +594,73 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
     (Ideally, though, I'd prefer to live without the overhead of managing a transaction log.)</h3>
 </section>
 
+<section class="slide" id="concurrency-5">
+    <h2>Java Transactions</h2>
+    <h3>Of course, Java does have transactions, but the Java Transaction API 
+    relies entirely on external systems -- usually a database -- to manage the transaction for it. </h3>
+    <p>I'm looking for the same level of transactional control within the language's runtime itself,
+    and here's where Java falls down.</p>
+
+</section>
+
 <section class="slide" id="STM-1">
-    <h2>Enter Software Transactional Memory</h2>
-    <h3>Here's what our bank transaction might look like in Haskell:</h3>
-    <pre><code>{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
+    <h2>Software Transactional Memory</h2>
+    <h3>Here's a simplified version of what our bank transaction might look like in Haskell:</h3>
+    <pre><code>import Control.Monad
 import Control.Concurrent.STM
-import Control.Monad
-            
-newtype Dollar = Dollar Int
-    deriving (Eq, Ord, Show, Num)
 
-type Balance = TVar Dollar
+type Account = TVar Int
 
-data Account = Account {
-          balance   :: Balance
-        }
-        
-basicTransfer :: Num a => a -> TVar a -> TVar a -> STM ()
-basicTransfer qty fromBal toBal = do
-    fromQty <- readTVar fromBal
-    toQty   <- readTVar toBal
-    writeTVar fromBal (fromQty - qty)
-    writeTVar toBal   (toQty + qty)
+credit :: Int -> Account -> STM ()
+credit amount account = do
+    current <- readTVar account
+    writeTVar account (current + amount)
+
+debit :: Int -> Account -> STM ()
+debit amount account = do
+    current <- readTVar account
+    writeTVar account (current - amount)
+
+transfer :: Int -> Account -> Account -> STM ()
+transfer amount from to = do
+    fromVal <- readTVar from
+    if (fromVal - amount) >= 0
+       then do
+             debit amount from
+             credit amount to
+       else retry  -- in real life, we'd wrap a 
+                   -- timeout around this</code></pre>
+</section>
+
+<section class="slide" id="STM-2">
+    <h2>Software Transactional Memory</h2>
+    <h3>Now, to run the code, all we have to do is add a main function:</h3>
+    <pre><code>
     
-transferTest :: STM (Dollar, Dollar)
-transferTest = do
-    acct1 <- newTVar (Dollar 12)
-    acct2   <- newTVar (Dollar 4)
-    basicTransfer (Dollar 3) acct1 acct2
-    liftM2 (,) (readTVar acct1) (readTVar acct2)</code></pre>
+    newAccount :: Int -> STM Account
+    newAccount balance = newTVar balance
+
+    transferTest :: STM (Int, Int)
+    transferTest = do
+        ac1 <- newAccount 20
+        ac2 <- newAccount 30
+        transfer 5 ac1 ac2
+        liftM2 (,) (readTVar ac1) (readTVar ac2)
+    
+    main :: IO ()
+    main = do
+        (amt1, amt2) <- atomically transferTest
+        putStrLn $ (show amt1) ++ ", " ++ (show amt2)</code></pre>
+</section>
+
+<section class="slide" id="STM-3">
+    <h2>Software Transactional Memory</h2>
+    <h3>What in the name of the Flying Spaghetti Monster was that?</h3>
+    <pre><code>
+    main :: IO ()
+    main = do
+        (amt1, amt2) <- atomically transferTest
+        putStrLn $ (show amt1) ++ ", " ++ (show amt2)</code></pre>
 </section>
 
 
