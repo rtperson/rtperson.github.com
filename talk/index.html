@@ -634,7 +634,7 @@ transfer amount from to = do
 
 <section class="slide" id="STM-2">
     <h2>Software Transactional Memory</h2>
-    <h3>Now, to run the code, all we have to do is add a main function:</h3>
+    <h3>Now, to run the code, all we have to do is add some helpers and a main function:</h3>
     <pre><code>
     
     newAccount :: Int -> STM Account
@@ -655,12 +655,34 @@ transfer amount from to = do
 
 <section class="slide" id="STM-3">
     <h2>Software Transactional Memory</h2>
-    <h3>What in the name of the Flying Spaghetti Monster was that?</h3>
-    <pre><code>
-    main :: IO ()
-    main = do
-        (amt1, amt2) <- atomically transferTest
-        putStrLn $ (show amt1) ++ ", " ++ (show amt2)</code></pre>
+    <h3>Some things to note about what we just did:</h3>
+    <ul>
+        <li>
+            <p class="slide">We just implemented a threadsafe function without locks, and without relying on an external system.</p>
+        </li>
+        <li>
+            <p class="slide">This code isn't perfect. (Ideally we'd want timeouts and exceptions, which are available in Haskell.)</p>
+        </li>
+        <li>
+            <p class="slide">But it is a lot cleaner than the Java alternative.</p>
+        </li>
+    </ul>
+    
+</section>
+
+<section class="slide" id="STM-4">
+    <h2>Software Transactional Memory</h2>
+    <h3>The combination of default immutability, strong types-within-types, and first-class functions give us 
+      a very strong foundation for building fully transactional concurrency within the language itself.</h3>
+      <br><br>
+   <img src="img/a-wrinkle-in-time-1.jpg" alt="Haskell is definitely Mrs. Whatsit."> 
+    
+</section>
+
+<section class="slide" id="Questions">
+    <h1>Questions</h1>
+
+    
 </section>
 
 
