@@ -1,4 +1,5 @@
 import Control.Monad
+import Control.Concurrent
 import Control.Concurrent.STM
 
 type Account = TVar Int
@@ -23,18 +24,40 @@ transfer amount from to = do
        else retry  -- in real life, we'd wrap a 
                    -- timeout around this
 
-newAccount :: Int -> STM Account
-newAccount balance = newTVar balance
+newAccount :: Int -> IO Account
+newAccount balance = newTVarIO balance
 
-transferTest :: STM (Int, Int)
-transferTest = do
-    ac1 <- newAccount 20
-    ac2 <- newAccount 30
-    transfer 5 ac1 ac2
-    liftM2 (,) (readTVar ac1) (readTVar ac2)
+transferTest :: Account -> Account -> STM (Int, Int)
+transferTest from to = do
+    transfer 5 from to
+    liftM2 (,) (readTVar from) (readTVar to)
 
+    
+showBalances :: Account -> Account -> IO ()
+showBalances ac1 ac2 = do
+    ac1Bal <- atomically $ readTVar ac1
+    ac2Bal <- atomically $ readTVar ac2
+    putStrLn $ "ac1Bal: " ++ (show ac1Bal) ++ ", ac2Bal: " ++ (show ac2Bal)    
 
 main :: IO ()
 main = do
-    (amt1, amt2) <- atomically transferTest
-    putStrLn $ (show amt1) ++ ", " ++ (show amt2)
+    ac1 <- newAccount 20
+    ac2 <- newAccount 30
+    ac1Bal <- atomically $ readTVar ac1
+    ac2Bal <- atomically $ readTVar ac2
+    showBalances ac1 ac2
+    putStrLn "******* Transferring 5 dollars ********"
+    forkIO $ atomically $ transfer 5 ac1 ac2
+    showBalances ac1 ac2
+    atomically $ writeTVar ac1 4
+    putStrLn "******* Poverty strikes ac1 ********"
+    showBalances ac1 ac2
+    putStrLn "******* Unable to transfer - will block until credit ********"
+    forkIO $ atomically $ transfer 5 ac1 ac2
+    threadDelay 4000000
+    forkIO $ atomically $ credit 20 ac1
+    showBalances ac1 ac2
+    threadDelay 4000000
+    putStrLn "******* Now the retry can go through ********"
+    showBalances ac1 ac2
+    

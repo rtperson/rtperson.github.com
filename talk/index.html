@@ -637,23 +637,82 @@ transfer amount from to = do
     <h3>Now, to run the code, all we have to do is add some helpers and a main function:</h3>
     <pre><code>
     
-    newAccount :: Int -> STM Account
-    newAccount balance = newTVar balance
+    newAccount :: Int -> IO Account
+    newAccount balance = newTVarIO balance
 
-    transferTest :: STM (Int, Int)
-    transferTest = do
-        ac1 <- newAccount 20
-        ac2 <- newAccount 30
-        transfer 5 ac1 ac2
-        liftM2 (,) (readTVar ac1) (readTVar ac2)
+    transferTest :: Account -> Account -> STM (Int, Int)
+    transferTest from to = do
+        transfer 5 from to
+        liftM2 (,) (readTVar from) (readTVar to)
     
     main :: IO ()
     main = do
+        ac1 <- newAccount 20
+        ac2 <- newAccount 30
         (amt1, amt2) <- atomically transferTest
         putStrLn $ (show amt1) ++ ", " ++ (show amt2)</code></pre>
 </section>
 
 <section class="slide" id="STM-3">
+    <h2>Software Transactional Memory</h2>
+    <h3>Or, if we want to see the <code>retry</code> in action:</h3>
+    <pre><code>    
+main :: IO ()
+main = do
+    ac1 <- newAccount 20
+    ac2 <- newAccount 30
+    ac1Bal <- atomically $ readTVar ac1
+    ac2Bal <- atomically $ readTVar ac2
+    showBalances ac1 ac2
+    putStrLn "******* Transferring 5 dollars ********"
+    forkIO $ atomically $ transfer 5 ac1 ac2
+    showBalances ac1 ac2
+    atomically $ writeTVar ac1 4
+    putStrLn "******* Poverty strikes ac1 ********"
+    showBalances ac1 ac2
+    putStrLn "******* Unable to transfer - will block until credit ********"
+    forkIO $ atomically $ transfer 5 ac1 ac2
+    threadDelay 4000000
+    forkIO $ atomically $ credit 20 ac1
+    showBalances ac1 ac2
+    threadDelay 4000000
+    putStrLn "******* Now the retry can go through ********"
+    showBalances ac1 ac2</code></pre>
+</section>
+
+<section class="slide" id="STM-4">
+    <h2>What is this STM Type, Anyway</h2>
+    <h3>The type <code>STM ()</code> is nothing more than the much-dreaded monad</h3>
+    <blockquote class="slide">
+        <p>A monad is a monoid in the category of endofunctors.</p>
+		<p><cite>Completely true, albeit unhelpful definition.</cite></p>
+	</blockquote> 
+    <blockquote class="slide">
+        <p>...a hack to turn function composition into a way of forcing the sequencing of function calls.</p>
+    	<p><cite>Eric Raymond, in a more helpful definition.</cite></p>
+	</blockquote>
+</section>
+
+<section class="slide" id="Monads">
+    <h2>Your 15-second Monad Tutorial</h2>
+    <h3>Here's what you need to know about monads:</h3>
+    <ul>
+        <li>
+            <p class="slide">Remember that, in Haskell, types can take other types.</p>
+        </li>
+        <li>
+            <p class="slide">A monad is little more than an interface that manages sequencing in a defined context.</p>
+        </li>
+        <li>
+            <p class="slide">Common monads: <code>Maybe</code>, <code>IO</code>, <code>Reader/Writer</code></p>
+        </li>
+        <li>
+            <p class="slide">Monads are different, and take some getting used to, but not particularly difficult to understand.</p>
+        </li>
+    </ul>
+</section>
+
+<section class="slide" id="STM-5">
     <h2>Software Transactional Memory</h2>
     <h3>Some things to note about what we just did:</h3>
     <ul>
@@ -661,10 +720,12 @@ transfer amount from to = do
             <p class="slide">We just implemented a threadsafe function without locks, and without relying on an external system.</p>
         </li>
         <li>
-            <p class="slide">This code isn't perfect. (Ideally we'd want timeouts and exceptions, which are available in Haskell.)</p>
+            <p class="slide">This code isn't perfect, but we can (with the help of our STM monad) compose a larger
+            transaction out of smaller transactions.</p>
         </li>
         <li>
-            <p class="slide">But it is a lot cleaner than the Java alternative.</p>
+            <p class="slide">We will have the same level of composability when we add timeouts and exceptions. 
+            This code is a lot cleaner than the Java alternative.</p>
         </li>
     </ul>
     
@@ -673,7 +734,7 @@ transfer amount from to = do
 <section class="slide" id="STM-4">
     <h2>Software Transactional Memory</h2>
     <h3>The combination of default immutability, strong types-within-types, and first-class functions give us 
-      a very strong foundation for building fully transactional concurrency within the language itself.</h3>
+      a very strong foundation for building transactionally concurrent programs within the language itself.</h3>
       <br><br>
    <img src="img/a-wrinkle-in-time-1.jpg" alt="Haskell is definitely Mrs. Whatsit."> 
     
