@@ -37,31 +37,6 @@
 	<h1>What Haskell Development Taught Me About Java Concurrency</h1>
 </section>
 
-<section class="slide" id="title-kicker">
-    <h2>Big Changes are Coming</h2>
-    <p>To avoid Armageddon, you should plan to</p>
-    <ol>
-        <li class="slide">
-            <h3>Duck</h3>
-        </li>
-        <li class="slide">
-            <h3>Cover</h3>
-        </li>
-        <li class="slide">
-            <h3>Run for the hills</h3>
-        </li>
-        <li class="slide">
-            <h3>Hit the gym</h3>
-        </li>
-        <li class="slide">
-            <h3>Lawyer up</h3>
-        </li>
-        <li class="slide">
-            <h3>Pray</h3>
-        </li>
-    </ol>
-    <p class="slide">... actually, it's not that bad, but things are moving rapidly, and you should know what's coming up for software developers.</p>
-</section>
 
 <section class="slide" id="why-haskell">
 	<h2>Why Haskell?</h2>
@@ -77,15 +52,15 @@
 		</li>
 		<li class="slide">
 			<h3>Structured Programming - 1960s</h3>
-            <p class="slide">Dijkstra's paper "GOTO Considered Harmful"</p>
-            <p class="slide">Introduced <code>if...then...else, while</code></p>
-            <p class="slide">Functions and subroutines</p>
+            <p>Dijkstra's paper "GOTO Considered Harmful"</p>
+            <p>Introduced <code>if...then...else, while</code></p>
+            <p>Functions and subroutines</p>
 		</li>
         <li class="slide">
             <h3>Object Oriented Programming - 1980s</h3>
-            <p class="slide">Objects, classes, polymorphism</p>
-            <p class="slide">Patterns, antipatterns</p>
-            <p class="slide">Dynamic and static dispatch</p>
+            <p>Objects, classes, polymorphism</p>
+            <p>Patterns, antipatterns</p>
+            <p>Dynamic and static dispatch</p>
         </li>
 	</ol>
 </section>
@@ -138,17 +113,6 @@
       </li>
       <li>
           <p>TB+ Hard Disks are challenging the old "Windows Based" UI</p>
-          <ul class="slide">
-              <li>
-                  <p>The Windows-style "Start Menu" no longer makes sense.</p>
-              </li>
-              <li>
-                  <p>All Major Vendors are switching to a more easily searchable UI</p>
-              </li>
-              <li>
-                  <p>Windows 8 Metro, Ubuntu Unity, Gnome 3...</p>
-              </li>
-          </ul>
       </li>
 </section>
 <section class="slide" id="need-new-tools-3">
@@ -189,7 +153,7 @@
           <p>Javascript, CoffeeScript - the gateway drugs. (JQuery makes heavy use of FP)</p>
       </li> 
       <li>
-          <p>Erlang - created by Ericsson. Supports massive concurrency. Used a lot in telecommunications.</p>
+          <p>Erlang - created by Ericsson. Supports massive distributed systems. Used a lot in telecommunications.</p>
       </li> 
       <li>
           <p>Python, Ruby, Groovy - other "scripting" languages</p>
@@ -248,6 +212,16 @@
         where
             go []     = z
             go (y:ys) = y `k` go ys</code></pre>
+    <p><code>[]</code> is an empty list, while <code>:</code> is a list concatenator.</p>
+    <p class="slide">In other words, if I have a list <code>[1,2,3]</code>, I could write it 
+    <code>1 : 2 : 3 : []</code>, and it would be evaluated like so:</p>
+    <pre class="slide"><code>
+       foldr (+) 0 (1:2:3:[])
+          == 1 +           foldr (+) 0 (2:3:[])
+          == 1 + (2 +      foldr (+) 0 (3:[])
+          == 1 + (2 + (3 + foldr (+) 0 []))
+          == 1 + (2 + (3 + 0))
+    </code></pre>
 </section>
 
 <section class="slide" id="exalted-claims">
@@ -356,8 +330,7 @@
 <section class="slide" id="fp-image">
     <h2>Pure Functional Programming is hard at first, but soon feels very natural</h2>
         <img src="img/dont_see_loops.jpg" alt="What if I told you...?">
-        
-        <p style="text-align:center;padding-top:50px;font-size:30px;font-weight:bolder">Demos</p>
+
 </section>
 
 <section class="slide" id="laziness">
@@ -461,8 +434,7 @@ different types -- one Int and one Integer (Haskell's "Bigint" type).</h3>
                deriving Show
     </code></pre>
     <p>I can now pattern-match on my Shape type, and do a lot of other fun things.</p>
-    <p>But one thing I <span style="font-style:italic">cannot</span> do is declare a Shape of type Ellipse
-    (unless, of course, I add and Ellipse to Shape).</p>
+    <p>But one thing I <span style="font-style:italic">cannot</span> do is declare a Shape of type Ellipse.</p>
 </section>
 
 <section class="slide" id="types-4">
