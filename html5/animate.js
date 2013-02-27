@@ -5,25 +5,25 @@ var canvas = null;
 var context = null;
 var framerate = 1000/30;
 var frame = 0;
-var assets = ['/img/animation/robowalk00.png',
-              '/img/animation/robowalk01.png',
-              '/img/animation/robowalk02.png',
-              '/img/animation/robowalk03.png',
-              '/img/animation/robowalk04.png',
-              '/img/animation/robowalk05.png',
-              '/img/animation/robowalk06.png',
-              '/img/animation/robowalk07.png',
-              '/img/animation/robowalk08.png',
-              '/img/animation/robowalk09.png',
-              '/img/animation/robowalk10.png',
-              '/img/animation/robowalk11.png',
-              '/img/animation/robowalk12.png',
-              '/img/animation/robowalk13.png',
-              '/img/animation/robowalk14.png',
-              '/img/animation/robowalk15.png',
-              '/img/animation/robowalk16.png',
-              '/img/animation/robowalk17.png',
-              '/img/animation/robowalk18.png'
+var assets = ['img/animation/robowalk00.png',
+              'img/animation/robowalk01.png',
+              'img/animation/robowalk02.png',
+              'img/animation/robowalk03.png',
+              'img/animation/robowalk04.png',
+              'img/animation/robowalk05.png',
+              'img/animation/robowalk06.png',
+              'img/animation/robowalk07.png',
+              'img/animation/robowalk08.png',
+              'img/animation/robowalk09.png',
+              'img/animation/robowalk10.png',
+              'img/animation/robowalk11.png',
+              'img/animation/robowalk12.png',
+              'img/animation/robowalk13.png',
+              'img/animation/robowalk14.png',
+              'img/animation/robowalk15.png',
+              'img/animation/robowalk16.png',
+              'img/animation/robowalk17.png',
+              'img/animation/robowalk18.png'
              ];
 var frames = [];
 
@@ -32,7 +32,7 @@ var onImageLoad = function(){
 };
 
 var setup = function() {
-    body = document.getElementById('body');
+    var body = document.getElementById('body');
     canvas = document.createElement('canvas');
 
     context = canvas.getContext('2d');
