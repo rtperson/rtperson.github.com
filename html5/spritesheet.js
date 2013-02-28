@@ -7,17 +7,21 @@
 // This dictionary is indexed by the URL path that the
 // atlas is located at. For example, calling:
 //
-// gSpriteSheets['grits_effects.png'] 
+// gSpriteSheets['grits_effects.png']
 //
 // would return the SpriteSheetClass object associated
 // to that URL, assuming that it exists.
 var gSpriteSheets = {};
+var body = document.getElementById("body");
+var canvas = body.createElement("canvas");
+var context = canvas.getContext('2d');
 
 //-----------------------------------------
 SpriteSheetClass = Class.extend({
 
     // We store in the SpriteSheetClass:
     //
+
     // The Image object that we created for our
     // atlas.
     img: null,
@@ -157,6 +161,19 @@ function drawSprite(spritename, posX, posY) {
     //
     // YOUR CODE HERE
 
+    // to set up sprite sheet:
+    //
+    //
+
+    for (var key in gSpriteSheets) {
+        if (gSpriteSheets[key].getStats(spritename) !== null) {
+            __drawSpriteInternal(spritename, gSpriteSheets[key], posX, posY);
+        }
+    }
+
+    // we haven't found the sprite to draw. Return null.
+    return null;
+
 }
 
 //-----------------------------------------
@@ -170,7 +187,11 @@ function __drawSpriteInternal(spt, sheet, posX, posY) {
     // null.
     //
     // YOUR CODE HERE
-    
+    if (spt === null || sheet === null) {
+        return null;
+    }
+        
+
     
     // Call the drawImage method of our canvas context
     // using the full drawImage API. drawImage takes,
@@ -210,6 +231,6 @@ function __drawSpriteInternal(spt, sheet, posX, posY) {
     // we want to draw.
     //
     // YOUR CODE HERE
-    
-    
+
+    context.drawImage(sheet, spt.x, spt.y, spt.w, spt.h, posX, poxY, spt.w, spt.h);
 }
