@@ -7,58 +7,54 @@
 // This dictionary is indexed by the URL path that the
 // atlas is located at. For example, calling:
 //
-// gSpriteSheets['grits_effects.png']
+// gSpriteSheets['grits_effects.png'] 
 //
 // would return the SpriteSheetClass object associated
 // to that URL, assuming that it exists.
 var gSpriteSheets = {};
-var body = document.getElementById("body");
-var canvas = body.createElement("canvas");
-var context = canvas.getContext('2d');
 
 //-----------------------------------------
 SpriteSheetClass = Class.extend({
 
     // We store in the SpriteSheetClass:
     //
-
     // The Image object that we created for our
     // atlas.
     img: null,
 
     // The URL path that we grabbed our atlas
     // from.
-	url: "",
+    url: "",
 
     // An array of all the sprites in our atlas.
-	sprites: [],
+    sprites: [],
 
-	//-----------------------------------------
-	init: function () {},
+    //-----------------------------------------
+    init: function () {},
 
-	//-----------------------------------------
+    //-----------------------------------------
     // Load the atlas at the path 'imgName' into
     // memory. This is similar to how we've
     // loaded images in previous units.
-	load: function (imgName) {
-		// Store the URL of the spritesheet we want.
+    load: function (imgName) {
+        // Store the URL of the spritesheet we want.
         this.url = imgName;
         
         // Create a new image whose source is at 'imgName'.
-		var img = new Image();
-		img.src = imgName;
+        var img = new Image();
+        img.src = imgName;
 
         // Store the Image object in the img parameter.
-		this.img = img;
+        this.img = img;
 
         // Store this SpriteSheetClass in our global
         // dictionary gSpriteSheets defined above.
-		gSpriteSheets[imgName] = this;
-	},
+        gSpriteSheets[imgName] = this;
+    },
 
-	//-----------------------------------------
-	// Define a sprite for this atlas
-	defSprite: function (name, x, y, w, h, cx, cy) {
+    //-----------------------------------------
+    // Define a sprite for this atlas
+    defSprite: function (name, x, y, w, h, cx, cy) {
         // We create a new object with:
         //
         // The name of the sprite as a string
@@ -74,26 +70,26 @@ SpriteSheetClass = Class.extend({
         // so we don't have to do the calculations
         // each time we need this. This might seem
         // minimal, but it adds up!
-		var spt = {
-			"id": name,
-			"x": x,
-			"y": y,
-			"w": w,
-			"h": h,
-			"cx": cx === null ? 0 : cx,
-			"cy": cy === null ? 0 : cy
-		};
+        var spt = {
+            "id": name,
+            "x": x,
+            "y": y,
+            "w": w,
+            "h": h,
+            "cx": cx === null ? 0 : cx,
+            "cy": cy === null ? 0 : cy
+        };
 
         // We push this new object into
         // our array of sprite objects,
         // at the end of the array.
-		this.sprites.push(spt);
-	},
+        this.sprites.push(spt);
+    },
 
-	//-----------------------------------------
+    //-----------------------------------------
     // Parse the JSON file passed in as 'atlasJSON'
     // that is associated to this atlas.
-	parseAtlasDefinition: function (atlasJSON) {
+    parseAtlasDefinition: function (atlasJSON) {
         // Parse the input 'atlasJSON' using the
         // JSON.parse method and store it in a
         // variable.
@@ -103,31 +99,31 @@ SpriteSheetClass = Class.extend({
         // For each sprite in the parsed JSON,
         // 'chaingun.png', chaingun_impact.png',
         // etc....
-		for(var key in parsed.frames) {
+        for(var key in parsed.frames) {
             // Grab the sprite from the parsed JSON...
-			var sprite = parsed.frames[key];
+            var sprite = parsed.frames[key];
 
-			// Define the center of the sprite as an offset
+            // Define the center of the sprite as an offset
             // (hence the negative).
             // We don't want to have to calculate these
             // values every single time we want to draw a
             // sprite! It adds up!
-			var cx = -sprite.frame.w * 0.5;
-			var cy = -sprite.frame.h * 0.5;
+            var cx = -sprite.frame.w * 0.5;
+            var cy = -sprite.frame.h * 0.5;
 
-			// Define the sprite for this sheet by calling
+            // Define the sprite for this sheet by calling
             // defSprite to store it into the 'sprites' Array.
-			this.defSprite(key, sprite.frame.x, sprite.frame.y, sprite.frame.w, sprite.frame.h, cx, cy);
-		}
-	},
+            this.defSprite(key, sprite.frame.x, sprite.frame.y, sprite.frame.w, sprite.frame.h, cx, cy);
+        }
+    },
 
-	//-----------------------------------------
-	// Walk through all the sprite definitions for this
+    //-----------------------------------------
+    // Walk through all the sprite definitions for this
     // atlas, and find which one matches the name.
-	getStats: function (name) {
+    getStats: function (name) {
         // For each sprite in the 'sprites' Array...
-		for(var i = 0; i < this.sprites.length; i++) {
-            
+        for(var i = 0; i < this.sprites.length; i++) {
+
             // Check if the sprite's 'id' parameter
             // equals the passed in name...
             if(this.sprites[i].id === name) {
@@ -135,11 +131,11 @@ SpriteSheetClass = Class.extend({
                 return this.sprites[i];
             }
 
-		}
+        }
 
         // If we don't find the sprite, return null.
-		return null;
-	}
+        return null;
+    }
 
 });
 
@@ -148,7 +144,7 @@ SpriteSheetClass = Class.extend({
 // on the sprite name (ie. "chaingun.png", and the
 // position on the canvas to draw to.
 function drawSprite(spritename, posX, posY) {
-	// Walk through all our spritesheets defined in
+    // Walk through all our spritesheets defined in
     // 'gSpriteSheets' and for each sheet:
     //
     // 1) Use the getStats method of the spritesheet
@@ -160,20 +156,14 @@ function drawSprite(spritename, posX, posY) {
     //    described below.
     //
     // YOUR CODE HERE
-
-    // to set up sprite sheet:
-    //
-    //
-
     for (var key in gSpriteSheets) {
-        if (gSpriteSheets[key].getStats(spritename) !== null) {
-            __drawSpriteInternal(spritename, gSpriteSheets[key], posX, posY);
-        }
+        var sprite = gSpriteSheets[key].getStats(spritename);
+        if (sprite === null) continue;
+        __drawSpriteInternal(sprite, gSpriteSheets[key], posX, posY);
     }
 
     // we haven't found the sprite to draw. Return null.
     return null;
-
 }
 
 //-----------------------------------------
@@ -183,16 +173,14 @@ function drawSprite(spritename, posX, posY) {
 // 'gSpriteSheets' dictionary, and the position on
 // canvas to draw to.
 function __drawSpriteInternal(spt, sheet, posX, posY) {
-	// First, check if the sprite or sheet objects are
+    // First, check if the sprite or sheet objects are
     // null.
     //
     // YOUR CODE HERE
     if (spt === null || sheet === null) {
         return null;
     }
-        
 
-    
     // Call the drawImage method of our canvas context
     // using the full drawImage API. drawImage takes,
     // in order:
@@ -232,5 +220,10 @@ function __drawSpriteInternal(spt, sheet, posX, posY) {
     //
     // YOUR CODE HERE
 
-    context.drawImage(sheet, spt.x, spt.y, spt.w, spt.h, posX, poxY, spt.w, spt.h);
+    var hlf = {
+        x: spt.cx,
+        y: spt.cy
+    };
+    ctx.drawImage(sheet.img, spt.x, spt.y, spt.w, spt.h, posX + hlf.x, posY + hlf.y, spt.w, spt.h);
+
 }
