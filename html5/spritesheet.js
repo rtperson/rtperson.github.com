@@ -7,7 +7,7 @@
 // This dictionary is indexed by the URL path that the
 // atlas is located at. For example, calling:
 //
-// gSpriteSheets['grits_effects.png'] 
+// gSpriteSheets['grits_effects.png']
 //
 // would return the SpriteSheetClass object associated
 // to that URL, assuming that it exists.
@@ -111,6 +111,33 @@ SpriteSheetClass = Class.extend({
             var cx = -sprite.frame.w * 0.5;
             var cy = -sprite.frame.h * 0.5;
 
+            // Check if the sprite is trimmed based on the
+            // 'trimmed' parameter in the parsed JSON. Look
+            // through the provided JSON if you're unsure
+            // where this is.
+            // If it is trimmed, then we need to update the
+            // center offset based upon how much data has
+            // been trimmed off of it.
+            //
+            // This will be based on the 'spriteSourceSize'
+            // and 'sourceSize' fields of the sprite.
+            //
+            // 'spriteSourceSize' defines:
+            //
+            // 1)
+            //
+            // 'sourceSize' defines:
+            //
+            // 1)
+            //
+            // This shouldn't be much code, but it's a bit of
+            // tricky math, so you might have to think about
+            // this for a bit. If it's done right, you shouldn't
+            // have to change any other code at all!
+            //
+            // YOUR CODE HERE
+
+
             // Define the sprite for this sheet by calling
             // defSprite to store it into the 'sprites' Array.
             this.defSprite(key, sprite.frame.x, sprite.frame.y, sprite.frame.w, sprite.frame.h, cx, cy);
@@ -145,25 +172,34 @@ SpriteSheetClass = Class.extend({
 // position on the canvas to draw to.
 function drawSprite(spritename, posX, posY) {
     // Walk through all our spritesheets defined in
-    // 'gSpriteSheets' and for each sheet:
-    //
-    // 1) Use the getStats method of the spritesheet
-    //    to find if a sprite with name 'spritename'
-    //    exists in that sheet.
-    //
-    // 2) If we find the appropriate sprite, call
-    //    '__drawSpriteInternal' with parameters as
-    //    described below.
-    //
-    // YOUR CODE HERE
-    for (var key in gSpriteSheets) {
-        var sprite = gSpriteSheets[key].getStats(spritename);
-        if (sprite === null) continue;
-        __drawSpriteInternal(sprite, gSpriteSheets[key], posX, posY);
-    }
+    // 'gSpriteSheets' and for each sheet...
+    for(var sheetName in gSpriteSheets) {
 
-    // we haven't found the sprite to draw. Return null.
-    return null;
+        // Use the getStats method of the spritesheet
+        // to find if a sprite with name 'spritename'
+        // exists in that sheet...
+        var sheet = gSpriteSheets[sheetName];
+        var sprite = sheet.getStats(spritename);
+
+        // If we find the appropriate sprite, call
+        // '__drawSpriteInternal' with parameters as
+        // described below. Otherwise, continue with
+        // the loop...
+        if(sprite === null) {
+            continue;
+        }
+
+        __drawSpriteInternal(sprite, sheet, posX, posY);
+
+        // Once we've called __drawSpriteInternal, we
+        // assume there isn't another sprite of the
+        // given 'spritename' that we want to draw,
+        // so we return.
+        // If you make this assumption, make sure
+        // your design team doesn't make sprites with
+        // the same name!
+        return;
+    }
 }
 
 //-----------------------------------------
@@ -175,10 +211,8 @@ function drawSprite(spritename, posX, posY) {
 function __drawSpriteInternal(spt, sheet, posX, posY) {
     // First, check if the sprite or sheet objects are
     // null.
-    //
-    // YOUR CODE HERE
     if (spt === null || sheet === null) {
-        return null;
+        return;
     }
 
     // Call the drawImage method of our canvas context
@@ -213,17 +247,11 @@ function __drawSpriteInternal(spt, sheet, posX, posY) {
     // 9) the height we are drawing in our canvas. This
     //    is in case we want to scale the image we are
     //    drawing to the canvas. In our case, we don't.
-    //
-    // Wow, that's a lot of parameters. Luckily, most
-    // of them are stored directly in the sprite object
-    // we want to draw.
-    //
-    // YOUR CODE HERE
 
     var hlf = {
         x: spt.cx,
         y: spt.cy
     };
-    ctx.drawImage(sheet.img, spt.x, spt.y, spt.w, spt.h, posX + hlf.x, posY + hlf.y, spt.w, spt.h);
 
+    ctx.drawImage(sheet.img, spt.x, spt.y, spt.w, spt.h, posX + hlf.x, posY + hlf.y, spt.w, spt.h);
 }
