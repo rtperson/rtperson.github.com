@@ -1,7 +1,44 @@
 
 
 var TILEDMapClass = Class.extend({
-    
+    // This is where we store the full parsed
+    // JSON of the map.json file.
+    currMapData: null,
+
+    // This is where we store the width and
+    // height of the map in tiles. This is
+    // in the 'width' and 'height' fields
+    // of map.json, respectively.
+    // The values 100 here are just set
+    // so these fields are initialized to
+    // something, rather than null.
+    numXTiles: 100,
+    numYTiles: 100,
+
+    // The size of each individual map
+    // tile, in pixels. This is in the
+    // 'tilewidth' and 'tileheight' fields
+    // of map.json, respectively.
+    // The values 64 here are just set
+    // so these fields are initialized to
+    // something, rather than null.
+    tileSize: {
+        "x": 64,
+        "y": 64
+    },
+
+    // The size of the entire map,
+    // in pixels. This is calculated
+    // based on the 'numXTiles', 'numYTiles',
+    // and 'tileSize' parameters.
+    // The values 64 here are just set
+    // so these fields are initialized to
+    // something, rather than null.
+    pixelSize: {
+        "x": 64,
+        "y": 64
+    },
+
     // Boolean flag we set once our map atlas
     // has finished loading.
     fullyLoaded: false,
@@ -14,21 +51,45 @@ var TILEDMapClass = Class.extend({
     load: function (map) {
 
         // Perform an XMLHttpRequest to grab the
-        // JSON file at url 'map'. We've provided
-        // the xhrGet function from the optional
-        // unit for you to use if you want.
+        // JSON file at url 'map'.
+        xhrGet(map, function (data) {
+            // Once the XMLHttpRequest loads, call the
+            // parseMapJSON method.
+            gMap.parseMapJSON(data.responseText);
+        });
+    },
+
+    //---------------------------
+    parseMapJSON: function (mapJSON) {
+        // Call JSON.parse on 'mapJSON' and store
+        // the resulting map data
+        this.currMapData = JSON.parse(mapJSON);
+
+        // Set the above properties of our TILEDMap based
+        // on the various properties in 'currMapData'.
+        // Look at the comments describing each field
+        // to see what properties of 'currMapData' to pull
+        // this information from.
         //
-        // Once the XMLHttpRequest loads, set the
-        // 'fullyLoaded' flag to true.
+        // Once you're done, set fullyLoaded to true.
         //
         // YOUR CODE HERE
-        
-        
+        this.numXTiles = this.currMapData.width;
+        this.numYTiles = this.currMapData.height;
+
+        this.tileSize = {
+            "x" : this.currMapData.tilewidth,
+            "y" : this.currMapData.tileheight
+        };
+        this.pixelSize = {
+            "x" : this.numXTiles * this.tileSize.x,
+            "y" : this.numYTiles * this.tileSize.y
+        };
+        this.fullyLoaded = true;
+
     }
 
 });
 
-// We define a single global instance of our
-// map for the rest of our game code to access.
 var gMap = new TILEDMapClass();
 

@@ -2,28 +2,28 @@
 
 
 var canvas = null;
-var context = null;
+var ctx = null;
 var framerate = 1000/30;
 var frame = 0;
-var assets = ['img/animation/robowalk00.png',
-              'img/animation/robowalk01.png',
-              'img/animation/robowalk02.png',
-              'img/animation/robowalk03.png',
-              'img/animation/robowalk04.png',
-              'img/animation/robowalk05.png',
-              'img/animation/robowalk06.png',
-              'img/animation/robowalk07.png',
-              'img/animation/robowalk08.png',
-              'img/animation/robowalk09.png',
-              'img/animation/robowalk10.png',
-              'img/animation/robowalk11.png',
-              'img/animation/robowalk12.png',
-              'img/animation/robowalk13.png',
-              'img/animation/robowalk14.png',
-              'img/animation/robowalk15.png',
-              'img/animation/robowalk16.png',
-              'img/animation/robowalk17.png',
-              'img/animation/robowalk18.png'
+var assets = ['/media/img/gamedev/robowalk/robowalk00.png',
+              '/media/img/gamedev/robowalk/robowalk01.png',
+              '/media/img/gamedev/robowalk/robowalk02.png',
+              '/media/img/gamedev/robowalk/robowalk03.png',
+              '/media/img/gamedev/robowalk/robowalk04.png',
+              '/media/img/gamedev/robowalk/robowalk05.png',
+              '/media/img/gamedev/robowalk/robowalk06.png',
+              '/media/img/gamedev/robowalk/robowalk07.png',
+              '/media/img/gamedev/robowalk/robowalk08.png',
+              '/media/img/gamedev/robowalk/robowalk09.png',
+              '/media/img/gamedev/robowalk/robowalk10.png',
+              '/media/img/gamedev/robowalk/robowalk11.png',
+              '/media/img/gamedev/robowalk/robowalk12.png',
+              '/media/img/gamedev/robowalk/robowalk13.png',
+              '/media/img/gamedev/robowalk/robowalk14.png',
+              '/media/img/gamedev/robowalk/robowalk15.png',
+              '/media/img/gamedev/robowalk/robowalk16.png',
+              '/media/img/gamedev/robowalk/robowalk17.png',
+              '/media/img/gamedev/robowalk/robowalk18.png'
              ];
 var frames = [];
 
@@ -35,8 +35,8 @@ var setup = function() {
     var body = document.getElementById('body');
     canvas = document.createElement('canvas');
 
-    context = canvas.getContext('2d');
-    
+    ctx = canvas.getContext('2d');
+
     canvas.width = 100;
     canvas.height = 100;
 
@@ -47,25 +47,26 @@ var setup = function() {
     // Afterwards, call setInterval to run at a framerate of 30 frames 
     // per second, calling the animation function each time.
     for (var x = 0; x < assets.length; x++) {
-        frames.push(new Image());
-        frames[x].onload = function() {
-            context.drawImage(img, 0, 0);
+        var img = new Image();
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0);
         };
-        frames[x].src = assets[x];
+        img.src = assets[x];
+        frames.push(img);
     }
-    setInterval(animation, framerate);
+    setInterval(animate, framerate);
 };
 
-var animation = function(){
+var animate = function(){
     // Draw each frame in order, looping back around to the 
     // beginning of the animation once you reach the end.
     // Draw each frame at a position of (0,0) on the canvas.
-  
+
     // Try your code with this call to clearRect commented out
     // and uncommented to see what happens!
     //
-    context.clearRect(0,0,canvas.width, canvas.height);
-    context.drawImage(frames[frame], 0, 0);
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    ctx.drawImage(frames[frame], 0, 0);
     frame = (frame + 1) % frames.length;
 
 };
