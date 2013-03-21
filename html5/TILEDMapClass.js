@@ -1,8 +1,49 @@
 
 
 var TILEDMapClass = Class.extend({
-    
-    // Boolean flag we set once our map atlas
+    // This is where we store the full parsed
+    // JSON of the map.json file.
+    currMapData: null,
+
+    // This is where we store the width and
+    // height of the map in tiles. This is
+    // in the 'width' and 'height' fields
+    // of map.json, respectively.
+    // The values 100 here are just set
+    // so these fields are initialized to
+    // something, rather than null.
+    numXTiles: 100,
+    numYTiles: 100,
+
+    // The size of each individual map
+    // tile, in pixels. This is in the
+    // 'tilewidth' and 'tileheight' fields
+    // of map.json, respectively.
+    // The values 64 here are just set
+    // so these fields are initialized to
+    // something, rather than null.
+    tileSize: {
+        "x": 64,
+        "y": 64
+    },
+
+    // The size of the entire map,
+    // in pixels. This is calculated
+    // based on the 'numXTiles', 'numYTiles',
+    // and 'tileSize' parameters.
+    // The values 64 here are just set
+    // so these fields are initialized to
+    // something, rather than null.
+    pixelSize: {
+        "x": 64,
+        "y": 64
+    },
+
+    // Counter to keep track of how many tile
+    // images we have successfully loaded.
+    imgLoadCount: 0,
+
+    // Boolean flag we set once our tile images
     // has finished loading.
     fullyLoaded: false,
 
@@ -14,21 +55,64 @@ var TILEDMapClass = Class.extend({
     load: function (map) {
 
         // Perform an XMLHttpRequest to grab the
-        // JSON file at url 'map'. We've provided
-        // the xhrGet function from the optional
-        // unit for you to use if you want.
+        // JSON file at url 'map'.
+        xhrGet(map, function (data) {
+            // Once the XMLHttpRequest loads, call the
+            // parseMapJSON method.
+            gMap.parseMapJSON(data.responseText);
+        });
+    },
+
+    //---------------------------
+    parseMapJSON: function (mapJSON) {
+        // Call JSON.parse on 'mapJSON' and store
+        // the resulting map data
+        gMap.currMapData = JSON.parse(mapJSON);
+
+        var map = gMap.currMapData;
+
+        // Set 'numXTiles' and 'numYTiles' from the
+        // 'width' and 'height' fields of our parsed
+        // map data.
+        gMap.numXTiles = map.width;
+        gMap.numYTiles = map.height;
+
+        // Set the 'tileSize.x' and 'tileSize.y' fields
+        // from the 'tilewidth' and 'tileheight' fields
+        // of our parsed map data.
+        gMap.tileSize.x = map.tilewidth;
+        gMap.tileSize.y = map.tileheight;
+
+        // Set the 'pixelSize.x' and 'pixelSize.y' fields
+        // by multiplying the number of tiles in our map
+        // by the size of each tile in pixels.
+        gMap.pixelSize.x = gMap.numXTiles * gMap.tileSize.x;
+        gMap.pixelSize.y = gMap.numYTiles * gMap.tileSize.y;
+
+        // Loop through 'map.tilesets', an Array, loading each
+        // of the provided tilesets as Images. Increment the
+        // above 'imgLoadCount' field of 'TILEDMap' as each
+        // tileset is loading. Once all the tilesets are
+        // loaded, set the 'fullyLoaded' flag to true.
         //
-        // Once the XMLHttpRequest loads, set the
-        // 'fullyLoaded' flag to true.
+        // The 'src' value to load each new Image from is in
+        // the 'image' property of the 'tilesets'.
+        // 
+        // Note that TILED by default has a rather ugly path
+        // for the 'image' property, which we'll discuss in
+        // the answer video. You won't need to worry about
+        // that right now.
         //
         // YOUR CODE HERE
-
-
+        for (var x = 0; x < map.tilesets.length; x++) {
+            var img = new Image();
+            img.src = map.tilesets[x].image;
+            gMap.imgLoadCount++;
+        }
+        gMap.fullyLoaded = true;
     }
 
 });
 
-// We define a single global instance of our
-// map for the rest of our game code to access.
 var gMap = new TILEDMapClass();
 
