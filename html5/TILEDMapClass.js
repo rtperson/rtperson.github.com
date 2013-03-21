@@ -105,11 +105,14 @@ var TILEDMapClass = Class.extend({
         //
         // YOUR CODE HERE
         for (var x = 0; x < map.tilesets.length; x++) {
-            var img = new Image();
-            img.src = map.tilesets[x].image;
-            gMap.imgLoadCount++;
+            img.onload = function() {
+                gMap.imgLoadCount++;
+                if (gMap.imgLoadCount === map.tilesets.length) {
+                    gMap.fullyLoaded = true;
+                }
+            };
+            img.src = "../data/" + map.tilesets[x].image.replace(/^.*[\\\/]/, '');
         }
-        gMap.fullyLoaded = true;
     }
 
 });
