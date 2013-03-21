@@ -22,8 +22,8 @@ var TILEDMapClass = Class.extend({
         // 'fullyLoaded' flag to true.
         //
         // YOUR CODE HERE
-        
-        
+
+
     }
 
 });
