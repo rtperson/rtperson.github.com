@@ -258,7 +258,7 @@ var TILEDMapClass = Class.extend({
         //    of the given layer.
         //
         // 3) For each tile id in the 'data' Array, we need
-        //    to:
+        //    to
         //    
         //    a) Check if the tile id is 0. An id of 0 means that
         //       we don't need to worry about drawing it, so we
@@ -269,12 +269,15 @@ var TILEDMapClass = Class.extend({
         //       on that tile id.
         //
         var dt;
-        for (var i = 0; i < gMap.currMapData.layers.length; i++) {
-            if (gMap.currMapData.layers[i].type !== 'tilelayer') continue;
-            dt = gMap.currMapData.layers[i].data;
-            for (var j = 0; j < dt.length; j++) {
-                if (dt[j] === 0) continue;
-                gMap.getTilePacket(dt[j]);
+        for (var layerIdx = 0; layerIdx < gMap.currMapData.layers.length; layerIdx++) {
+            if (gMap.currMapData.layers[layerIdx].type !== 'tilelayer') continue;
+            dt = gMap.currMapData.layers[layerIdx].data;
+            for (var tileIdx = 0; tileIdx < dt.length; tileIdx++) {
+                if (dt[tileIdx] === 0) continue;
+                var tPKt = gMap.getTilePacket(dt[tileIdx]);
+                var destX = (tileIDX % gMap.currMapData.layers[tileIdx].width) * gMap.tileSize.x;
+                var destY = Math.floor(tileIDX / gMap.currMapData.layers[tileIdx].width) * gMap.tileSize.x;
+                ctx.drawImage(tPKT.img, tPKT.px, tPKT.py, gMap.tileSize.x, gMap.tileSize.y, destX, destY, gMap.tileSize.x, gMap.tileSize.y);
             }
         }
 
